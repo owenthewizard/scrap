@@ -13,10 +13,11 @@ pub struct DisplayIter {
 }
 
 impl DisplayIter {
-    pub unsafe fn new(server: Rc<Server>) -> DisplayIter {
+    #[must_use]
+    pub unsafe fn new(server: Rc<Server>) -> Self {
         let mut outer = xcb_setup_roots_iterator(server.setup());
         let inner = Self::next_screen(&mut outer, &server);
-        DisplayIter { outer, inner, server }
+        Self { outer, inner, server }
     }
 
     fn next_screen(

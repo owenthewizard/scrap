@@ -19,17 +19,25 @@ pub struct Rect {
 }
 
 impl Display {
+    #[must_use]
     pub unsafe fn new(
         server: Rc<Server>,
         default: bool,
         rect: Rect,
         root: xcb_window_t
-    ) -> Display {
-        Display { server, default, rect, root }
+    ) -> Self {
+        Self { server, default, rect, root }
     }
 
-    pub fn server(&self) -> &Rc<Server> { &self.server }
-    pub fn is_default(&self) -> bool { self.default }
-    pub fn rect(&self) -> Rect { self.rect }
-    pub fn root(&self) -> xcb_window_t { self.root }
+    #[must_use]
+    pub const fn server(&self) -> &Rc<Server> { &self.server }
+
+    #[must_use]
+    pub const fn is_default(&self) -> bool { self.default }
+
+    #[must_use]
+    pub const fn rect(&self) -> Rect { self.rect }
+
+    #[must_use]
+    pub const fn root(&self) -> xcb_window_t { self.root }
 }
