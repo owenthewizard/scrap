@@ -22,3 +22,7 @@ block = "0.1"
 
 [dev-dependencies]
 repng = "0.2"
+
+[profile.release]
+lto = true
+codegen-units = 1
