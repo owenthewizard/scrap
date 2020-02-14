@@ -12,6 +12,8 @@ authors = ["Ram <quadrupleslap@gmail.com>"]
 block = "0.1"
 cfg-if = "0.1"
 libc = "0.2"
+
+[target.'cfg(windows)'.dependencies]
 winapi = "0.2"
 
 [dev-dependencies]
