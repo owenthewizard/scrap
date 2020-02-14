@@ -7,7 +7,7 @@ pub struct Capturer {
     display: Display,
     shmid: i32,
     xcbid: u32,
-    buffer: *const u8,
+    buffer: *mut u8,
 
     request: xcb_shm_get_image_cookie_t,
     loading: usize,
@@ -31,7 +31,7 @@ impl Capturer {
                 libc::IPC_PRIVATE,
                 size * 2,
                 // Everyone can do anything.
-                libc::IPC_CREAT | 0o777
+                libc::IPC_CREAT | 0o600
             )
         };
 
@@ -45,7 +45,7 @@ impl Capturer {
             libc::shmat(
                 shmid,
                 ptr::null(),
-                libc::SHM_RDONLY
+                0
             )
         } as *mut u8;
 
@@ -94,12 +94,12 @@ impl Capturer {
         &self.display
     }
 
-    pub fn frame(&mut self) -> &[u8] {
+    pub fn frame(&mut self) -> &mut [u8] {
         // Get the return value.
 
         let result = unsafe {
             let off = self.loading & self.size;
-            slice::from_raw_parts(
+            slice::from_raw_parts_mut(
                 self.buffer.add(off),
                 self.size
             )
