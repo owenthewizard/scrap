@@ -5,15 +5,17 @@ use std::rc::Rc;
 pub struct Capturer(x11::Capturer);
 
 impl Capturer {
-    pub fn new(display: Display) -> io::Result<Capturer> {
-        x11::Capturer::new(display.0).map(Capturer)
+    pub fn new(display: Display) -> io::Result<Self> {
+        x11::Capturer::new(display.0).map(Self)
     }
 
-    pub fn width(&self) -> usize {
+    #[must_use]
+    pub const fn width(&self) -> usize {
         self.0.display().rect().w as usize
     }
 
-    pub fn height(&self) -> usize {
+    #[must_use]
+    pub const fn height(&self) -> usize {
         self.0.display().rect().h as usize
     }
 
@@ -34,7 +36,7 @@ impl<'a> ops::Deref for Frame<'a> {
 pub struct Display(x11::Display);
 
 impl Display {
-    pub fn primary() -> io::Result<Display> {
+    pub fn primary() -> io::Result<Self> {
         let server = Rc::new(match x11::Server::default() {
             Ok(server) => server,
             Err(_) => return Err(io::ErrorKind::ConnectionRefused.into())
@@ -47,41 +49,47 @@ impl Display {
         }
 
         match best {
-            Some(best) => Ok(Display(best)),
+            Some(best) => Ok(Self(best)),
             None => Err(io::ErrorKind::NotFound.into())
         }
     }
 
-    pub fn all() -> io::Result<Vec<Display>> {
+    pub fn all() -> io::Result<Vec<Self>> {
         let server = Rc::new(match x11::Server::default() {
             Ok(server) => server,
             Err(_) => return Err(io::ErrorKind::ConnectionRefused.into())
         });
 
-        Ok(x11::Server::displays(server).map(Display).collect())
+        Ok(x11::Server::displays(server).map(Self).collect())
     }
 
-    pub fn width(&self) -> usize {
+    #[must_use]
+    pub const fn width(&self) -> usize {
         self.0.rect().w as usize
     }
 
-    pub fn height(&self) -> usize {
+    #[must_use]
+    pub const fn height(&self) -> usize {
         self.0.rect().h as usize
     }
 
+    #[must_use]
     pub fn top(&self) -> i32 {
-        self.0.rect().y as i32
+        i32::from(self.0.rect().y)
     }
 
+    #[must_use]
     pub fn bottom(&self) -> i32 {
-        (self.0.rect().y + self.0.rect().h as i16) as i32
+        i32::from(self.0.rect().y + self.0.rect().h as i16)
     }
 
+    #[must_use]
     pub fn left(&self) -> i32 {
-        self.0.rect().x as i32
+        i32::from(self.0.rect().x)
     }
 
+    #[must_use]
     pub fn right(&self) -> i32 {
-        (self.0.rect().x + self.0.rect().w as i16) as i32
+        i32::from(self.0.rect().x + self.0.rect().w as i16)
     }
 }

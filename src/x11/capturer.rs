@@ -17,7 +17,7 @@ pub struct Capturer {
 impl Capturer {
     pub fn new(
         display: Display
-    ) -> io::Result<Capturer> {
+    ) -> io::Result<Self> {
         // Calculate dimensions.
 
         let pixel_width = 4;
@@ -83,23 +83,24 @@ impl Capturer {
 
         // Return!
 
-        Ok(Capturer {
+        Ok(Self {
             display, shmid, xcbid, buffer,
             request, loading: 0, size
         })
     }
 
-    pub fn display(&self) -> &Display {
+    #[must_use]
+    pub const fn display(&self) -> &Display {
         &self.display
     }
 
-    pub fn frame<'b>(&'b mut self) -> &'b [u8] {
+    pub fn frame(&mut self) -> &[u8] {
         // Get the return value.
 
         let result = unsafe {
             let off = self.loading & self.size;
             slice::from_raw_parts(
-                self.buffer.offset(off as isize),
+                self.buffer.add(off),
                 self.size
             )
         };

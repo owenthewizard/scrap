@@ -11,35 +11,42 @@ pub struct Server {
 }
 
 impl Server {
-    pub fn displays(slf: Rc<Server>) -> DisplayIter {
+    #[must_use]
+    pub fn displays(slf: Rc<Self>) -> DisplayIter {
         unsafe {
             DisplayIter::new(slf)
         }
     }
 
-    pub fn default() -> Result<Server, Error> {
-        Server::connect(ptr::null())
+    pub fn default() -> Result<Self, Error> {
+        Self::connect(ptr::null())
     }
 
-    pub fn connect(addr: *const i8) -> Result<Server, Error> {
+    pub fn connect(addr: *const i8) -> Result<Self, Error> {
         unsafe {
             let mut screenp = 0;
+            // may be unsafe, see clippy lint
             let raw = xcb_connect(addr, &mut screenp);
 
             let error = xcb_connection_has_error(raw);
-            if error != 0 {
+            if error == 0 {
+                let setup = xcb_get_setup(raw);
+                Ok(Self { raw, screenp, setup })
+            } else {
                 xcb_disconnect(raw);
                 Err(Error::from(error))
-            } else {
-                let setup = xcb_get_setup(raw);
-                Ok(Server { raw, screenp, setup })
             }
         }
     }
 
-    pub fn raw(&self) -> *mut xcb_connection_t { self.raw }
-    pub fn screenp(&self) -> i32 { self.screenp }
-    pub fn setup(&self) -> *const xcb_setup_t { self.setup }
+    #[must_use]
+    pub const fn raw(&self) -> *mut xcb_connection_t { self.raw }
+
+    #[must_use]
+    pub const fn screenp(&self) -> i32 { self.screenp }
+
+    #[must_use]
+    pub const fn setup(&self) -> *const xcb_setup_t { self.setup }
 }
 
 impl Drop for Server {
@@ -61,7 +68,7 @@ pub enum Error {
 }
 
 impl From<i32> for Error {
-    fn from(x: i32) -> Error {
+    fn from(x: i32) -> Self {
         use self::Error::*;
         match x {
             2 => UnsupportedExtension,
