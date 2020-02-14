@@ -9,12 +9,16 @@ license = "MIT"
 authors = ["Ram <quadrupleslap@gmail.com>"]
 
 [dependencies]
-block = "0.1"
 cfg-if = "0.1"
-libc = "0.2"
 
 [target.'cfg(windows)'.dependencies]
 winapi = "0.2"
+
+[target.'cfg(not(windows))'.dependencies]
+libc = "0.2"
+
+[target.'cfg(macos)'.dependencies]
+block = "0.1"
 
 [dev-dependencies]
 repng = "0.2"
