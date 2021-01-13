@@ -9,10 +9,10 @@ license = "MIT"
 authors = ["Ram <quadrupleslap@gmail.com>"]
 
 [dependencies]
-cfg-if = "0.1"
+cfg-if = "1.0"
 
 [target.'cfg(windows)'.dependencies]
-winapi = "0.2"
+winapi = "0.3"
 
 [target.'cfg(not(windows))'.dependencies]
 libc = "0.2"
