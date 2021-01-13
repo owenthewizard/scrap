@@ -19,7 +19,7 @@ impl Capturer {
         self.0.display().rect().h as usize
     }
 
-    pub fn frame<'a>(&'a mut self) -> io::Result<Frame<'a>> {
+    pub fn frame(&mut self) -> io::Result<Frame> {
         Ok(Frame(self.0.frame()))
     }
 }
