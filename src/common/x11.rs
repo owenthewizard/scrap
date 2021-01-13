@@ -35,7 +35,7 @@ impl<'a> ops::Deref for Frame<'a> {
 
 impl<'a> ops::DerefMut for Frame<'a> {
     fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
+        self.0
     }
 }
 
